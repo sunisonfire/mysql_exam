@@ -31,3 +31,13 @@ select concat(propietario.nombre, ' ', propietario.apellido) as nombre_completo,
     -> group by nombre_completo
     -> having count(*) > 1;
   <img width="736" height="184" alt="image" src="https://github.com/user-attachments/assets/c8aa00b1-a1fc-4edb-a3cb-5e947fc67991" />
+Pregunta 6
+select concat(veterinario.nombre, ' ', veterinario.apellido) as veterinario, count(*) as consultas_atendidad, sum(consulta.valor_cobrado) as total_facturado, avg(valor_cobrado) as promedio from veterinario
+    -> left join consulta
+    -> on veterinario.id=consulta.veterinario_fk
+    -> group by veterinario
+    -> having total_facturado>3000
+    -> ;
+    <img width="742" height="187" alt="image" src="https://github.com/user-attachments/assets/7d5b6c70-2ee2-4cc2-8765-e7210509d05b" />
+    
+
