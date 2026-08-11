@@ -1,0 +1,234 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema veterinaria_ex
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema veterinaria
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema veterinaria
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `veterinaria` DEFAULT CHARACTER SET utf8mb3 ;
+USE `veterinaria` ;
+
+-- -----------------------------------------------------
+-- Table `veterinaria`.`propietario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veterinaria`.`propietario` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `apellido` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `veterinaria`.`mascota`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veterinaria`.`mascota` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `especie` VARCHAR(45) NOT NULL,
+  `propietario_fk` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `propietario_fk_idx` (`propietario_fk` ASC) VISIBLE,
+  CONSTRAINT `propietario_fk`
+    FOREIGN KEY (`propietario_fk`)
+    REFERENCES `veterinaria`.`propietario` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `veterinaria`.`veterinario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veterinaria`.`veterinario` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `apellido` VARCHAR(45) NOT NULL,
+  `especialidad` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `veterinaria`.`consulta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veterinaria`.`consulta` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `fecha` DATE NOT NULL,
+  `motivo` VARCHAR(45) NOT NULL,
+  `valor_cobrado` DOUBLE NOT NULL,
+  `veterinario_fk` INT NOT NULL,
+  `mascota_fk` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `veterinario_fk_idx` (`veterinario_fk` ASC) VISIBLE,
+  INDEX `mascota_fk_idx` (`mascota_fk` ASC) VISIBLE,
+  CONSTRAINT `mascota_fk`
+    FOREIGN KEY (`mascota_fk`)
+    REFERENCES `veterinaria`.`mascota` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `veterinario_fk`
+    FOREIGN KEY (`veterinario_fk`)
+    REFERENCES `veterinaria`.`veterinario` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `veterinaria`.`tratamiento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veterinaria`.`tratamiento` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `costo_base` DOUBLE NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `veterinaria`.`consulta_has_tratamiento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veterinaria`.`consulta_has_tratamiento` (
+  `consulta_id` INT NOT NULL,
+  `tratamiento_id` INT NOT NULL,
+  `cantidad_utilizada` INT NOT NULL,
+  `costo_aplicado` DOUBLE NOT NULL,
+  PRIMARY KEY (`consulta_id`, `tratamiento_id`),
+  INDEX `fk_cht_tratamiento1_idx` (`tratamiento_id` ASC) VISIBLE,
+  INDEX `fk_cht_consulta1_idx` (`consulta_id` ASC) VISIBLE,
+  CONSTRAINT `fk_cht_consulta1`
+    FOREIGN KEY (`consulta_id`)
+    REFERENCES `veterinaria`.`consulta` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_cht_tratamiento1`
+    FOREIGN KEY (`tratamiento_id`)
+    REFERENCES `veterinaria`.`tratamiento` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `veterinaria`.`detalle_consulta`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veterinaria`.`detalle_consulta` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `atencion` VARCHAR(45) NOT NULL,
+  `comportamiento` VARCHAR(45) NOT NULL,
+  `consulta_fk` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `consulta_fk_UNIQUE` (`consulta_fk` ASC) VISIBLE,
+  CONSTRAINT `consulta_fk`
+    FOREIGN KEY (`consulta_fk`)
+    REFERENCES `veterinaria`.`consulta` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+USE veterinaria;
+
+-- =========================================
+-- INSERTS: PROPIETARIO
+-- =========================================
+
+INSERT INTO propietario (id, nombre, apellido) VALUES
+(1, 'Laura', 'Gomez'),
+(2, 'Carlos', 'Martinez'),
+(3, 'Ana', 'Rodriguez');
+
+
+-- =========================================
+-- INSERTS: MASCOTA
+-- =========================================
+
+INSERT INTO mascota (id, nombre, especie, propietario_fk) VALUES
+(1, 'Max', 'Perro', 1),
+(2, 'Luna', 'Gato', 1),
+(3, 'Rocky', 'Perro', 2),
+(4, 'Mia', 'Conejo', 3);
+
+
+-- =========================================
+-- INSERTS: VETERINARIO
+-- =========================================
+
+INSERT INTO veterinario (id, nombre, apellido, especialidad) VALUES
+(1, 'Andres', 'Lopez', 'Cirugia'),
+(2, 'Maria', 'Perez', 'Dermatologia'),
+(3, 'Jorge', 'Ramirez', 'Medicina general');
+
+
+-- =========================================
+-- INSERTS: TRATAMIENTO
+-- =========================================
+
+INSERT INTO tratamiento (id, nombre, costo_base) VALUES
+(1, 'Vacunacion', 50000),
+(2, 'Desparasitacion', 30000),
+(3, 'Limpieza dental', 80000);
+
+
+-- =========================================
+-- INSERTS: CONSULTA
+-- =========================================
+
+INSERT INTO consulta 
+(id, fecha, motivo, valor_cobrado, veterinario_fk, mascota_fk) VALUES
+(1, '2026-08-01', 'Vacunacion anual', 70000, 1, 1),
+(2, '2026-08-03', 'Problemas de piel', 90000, 2, 2),
+(3, '2026-08-05', 'Dolor abdominal', 60000, 3, 3),
+(4, '2026-08-07', 'Revision general', 50000, 3, 4);
+
+
+-- =========================================
+-- INSERTS: CONSULTA_HAS_TRATAMIENTO
+-- =========================================
+
+INSERT INTO consulta_has_tratamiento
+(consulta_id, tratamiento_id, cantidad_utilizada, costo_aplicado) VALUES
+(1, 1, 1, 50000),
+(1, 2, 1, 30000),
+(2, 2, 1, 30000),
+(3, 2, 2, 60000),
+(4, 1, 1, 50000);
+
+
+-- =========================================
+-- INSERTS: DETALLE_CONSULTA
+-- =========================================
+
+INSERT INTO detalle_consulta
+(id, atencion, comportamiento, consulta_fk) VALUES
+(1, 'Buena', 'Tranquilo', 1),
+(2, 'Buena', 'Inquieto', 2),
+(3, 'Regular', 'Nervioso', 3),
+(4, 'Buena', 'Tranquilo', 4);
