@@ -1,3 +1,28 @@
+# 🐾 Examen MySQL: Veterinaria
+
+Examen práctico de MySQL realizado en Campuslands. Consiste en resolver 6 consultas sobre una base de datos de una veterinaria que maneja mascotas, propietarios, veterinarios y consultas.
+
+## 🗂️ Tablas
+
+| Tabla | Descripción |
+|---|---|
+| `propietario` | Dueños de las mascotas |
+| `mascota` | Mascotas y su propietario (`propietario_fk`) |
+| `veterinario` | Veterinarios y su especialidad |
+| `consulta` | Consultas realizadas, con veterinario, mascota y valor cobrado |
+
+## 🔍 Consultas resueltas
+
+| # | Qué resuelve | Conceptos usados |
+|---|---|---|
+| 1 | Lista cada mascota con su especie y el nombre completo de su propietario | `LEFT JOIN`, `CONCAT` |
+| 2 | Cantidad de veterinarios por especialidad | `COUNT`, `GROUP BY` |
+| 3 | Cantidad de consultas por mascota | `LEFT JOIN`, `COUNT`, `GROUP BY` |
+| 4 | Top 3 de veterinarios que más han facturado, con su número de consultas | `INNER JOIN`, `SUM`, `ORDER BY`, `LIMIT` |
+| 5 | Propietarios con más de una mascota | `LEFT JOIN`, `GROUP BY`, `HAVING` |
+| 6 | Veterinarios que han facturado más de 3000, con consultas atendidas, total y promedio | `SUM`, `AVG`, `HAVING` |
+
+
 Pregunta 1
 select mascota.nombre as mascota, mascota.especie, concat(propietario.nombre, ' ', propietario.apellido) as propietario from mascota
     -> left join propietario
